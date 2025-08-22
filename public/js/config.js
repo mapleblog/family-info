@@ -2,10 +2,13 @@
 // 请将以下配置替换为您的 Firebase 项目配置
 
 // Firebase 项目配置
+// 注意：在生产环境中，这些值应该从环境变量或安全的配置服务中获取
+// 由于这是前端应用，我们暂时保留配置，但建议使用 Firebase Hosting 的环境变量功能
 const firebaseConfig = {
     // 请在 Firebase Console 中获取您的配置信息
     // https://console.firebase.google.com/
     
+    // 开发环境配置 - 请替换为您的实际配置
     apiKey: "AIzaSyBgKTwqkFPVNTqypHPfL-7GdyPjfuRwaqM",
     authDomain: "family-info-a7dd1.firebaseapp.com",
     projectId: "family-info-a7dd1",
@@ -14,13 +17,14 @@ const firebaseConfig = {
     appId: "1:173335844935:web:4f866284cddb82af453962",
     measurementId: "G-P8P8N6GRDP"
     
-    // 示例配置（请替换为实际配置）:
-    // apiKey: "AIzaSyBxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-    // authDomain: "family-info-12345.firebaseapp.com",
-    // projectId: "family-info-12345",
-    // storageBucket: "family-info-12345.appspot.com",
-    // messagingSenderId: "123456789012",
-    // appId: "1:123456789012:web:abcdef123456789012345"
+    // 生产环境建议使用环境变量:
+    // apiKey: process.env.FIREBASE_API_KEY,
+    // authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+    // projectId: process.env.FIREBASE_PROJECT_ID,
+    // storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    // messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    // appId: process.env.FIREBASE_APP_ID,
+    // measurementId: process.env.FIREBASE_MEASUREMENT_ID
 };
 
 // 初始化 Firebase

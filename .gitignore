@@ -11,6 +11,16 @@ firebase-debug.*.log*
 .firebase/
 
 # Firebase config
+# 环境变量文件（包含敏感信息）
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Firebase 私钥和服务账户文件
+serviceAccountKey.json
+*.json.key
 
 # Uncomment this if you'd like others to create their own Firebase project.
 # For a team working on the same Firebase project(s), it is recommended to leave
@@ -67,3 +77,31 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+
+# 操作系统生成的文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE 和编辑器文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 临时文件
+*.tmp
+*.temp
+
+# 备份文件
+*.bak
+*.backup
+
+# 用户特定配置
+users.json
+*.local.json
