@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>仪表板 - 家庭信息储存平台</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- 自定义样式 -->
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-home me-2"></i>
+                家庭信息储存平台
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="showSection('overview')">概览</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('members')">家庭成员</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showSection('documents')">文档管理</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <img id="userAvatar" src="" alt="用户头像" class="rounded-circle me-2" width="32" height="32">
+                            <span id="userName">用户</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#userProfileModal"><i class="fas fa-user me-2"></i>个人资料</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>设置</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="signOut()"><i class="fas fa-sign-out-alt me-2"></i>退出登录</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- 侧边栏 -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" onclick="showSection('overview')">
+                                <i class="fas fa-tachometer-alt me-2"></i>
+                                概览
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showSection('members')">
+                                <i class="fas fa-users me-2"></i>
+                                家庭成员
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showSection('documents')">
+                                <i class="fas fa-file-alt me-2"></i>
+                                文档管理
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- 主内容区域 -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <!-- 概览部分 -->
+                <div id="overviewSection" class="content-section">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">概览</h1>
+                    </div>
+
+                    <!-- 统计卡片 -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card text-white bg-primary">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h5 class="card-title">家庭成员</h5>
+                                            <h2 id="memberCount">0</h2>
+                                        </div>
+                                        <div class="align-self-center">
+                                            <i class="fas fa-users fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-white bg-success">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h5 class="card-title">存储文档</h5>
+                                            <h2 id="documentCount">0</h2>
+                                        </div>
+                                        <div class="align-self-center">
+                                            <i class="fas fa-file-alt fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-white bg-info">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h5 class="card-title">存储空间</h5>
+                                            <h2 id="storageUsed">0 MB</h2>
+                                        </div>
+                                        <div class="align-self-center">
+                                            <i class="fas fa-hdd fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 快速操作 -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">快速操作</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <button class="btn btn-primary btn-lg w-100" onclick="showSection('members')">
+                                                <i class="fas fa-user-plus me-2"></i>
+                                                添加家庭成员
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <button class="btn btn-success btn-lg w-100" onclick="showSection('documents')">
+                                                <i class="fas fa-upload me-2"></i>
+                                                上传文档
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 家庭成员部分 -->
+                <div id="membersSection" class="content-section d-none">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">家庭成员管理</h1>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">
+                            <i class="fas fa-plus me-2"></i>添加成员
+                        </button>
+                    </div>
+
+                    <!-- 成员列表 -->
+                    <div id="membersList" class="row">
+                        <!-- 成员卡片将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+
+                <!-- 文档管理部分 -->
+                <div id="documentsSection" class="content-section d-none">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2">文档管理</h1>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadDocumentModal">
+                            <i class="fas fa-upload me-2"></i>上传文档
+                        </button>
+                    </div>
+
+                    <!-- 文件上传 -->
+                    <input type="file" id="fileInput" class="d-none" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt" onchange="uploadFiles(this.files)">
+
+                    <!-- 文档列表 -->
+                    <div id="documentsList">
+                        <!-- 文档列表将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- 添加成员模态框 -->
+    <div class="modal fade" id="addMemberModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">添加家庭成员</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addMemberForm">
+                        <div class="mb-3">
+                            <label for="memberName" class="form-label">姓名 *</label>
+                            <input type="text" class="form-control" id="memberName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="memberRelation" class="form-label">关系 *</label>
+                            <select class="form-select" id="memberRelation" required>
+                                <option value="">请选择关系</option>
+                                <option value="父亲">父亲</option>
+                                <option value="母亲">母亲</option>
+                                <option value="配偶">配偶</option>
+                                <option value="儿子">儿子</option>
+                                <option value="女儿">女儿</option>
+                                <option value="兄弟">兄弟</option>
+                                <option value="姐妹">姐妹</option>
+                                <option value="祖父">祖父</option>
+                                <option value="祖母">祖母</option>
+                                <option value="外祖父">外祖父</option>
+                                <option value="外祖母">外祖母</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="memberBirthdate" class="form-label">出生日期</label>
+                            <input type="date" class="form-control" id="memberBirthdate">
+                        </div>
+                        <div class="mb-3">
+                            <label for="memberPhone" class="form-label">联系电话</label>
+                            <input type="tel" class="form-control" id="memberPhone">
+                        </div>
+                        <div class="mb-3">
+                            <label for="memberNotes" class="form-label">备注</label>
+                            <textarea class="form-control" id="memberNotes" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="addMember()">添加</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 上传文档模态框 -->
+    <div class="modal fade" id="uploadDocumentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">上传文档</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="uploadDocumentForm">
+                        <div class="mb-3">
+                            <label for="documentFile" class="form-label">选择文件 *</label>
+                            <input type="file" class="form-control" id="documentFile" required 
+                                   accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.jpg,.jpeg,.png,.gif,.webp">
+                            <div class="form-text">支持的文件类型：PDF、Word、Excel、PowerPoint、文本文件、图片文件（最大10MB）</div>
+                        </div>
+                        <div id="fileInfo"></div>
+                        <div class="mb-3">
+                            <label for="documentName" class="form-label">文档名称</label>
+                            <input type="text" class="form-control" id="documentName" placeholder="留空则使用文件名">
+                        </div>
+                        <div class="mb-3">
+                            <label for="documentCategory" class="form-label">分类 *</label>
+                            <select class="form-select" id="documentCategory" required>
+                                <option value="">请选择分类</option>
+                                <option value="身份证件">身份证件</option>
+                                <option value="医疗健康">医疗健康</option>
+                                <option value="教育证书">教育证书</option>
+                                <option value="财务文件">财务文件</option>
+                                <option value="保险文件">保险文件</option>
+                                <option value="房产文件">房产文件</option>
+                                <option value="家庭照片">家庭照片</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="documentDescription" class="form-label">描述</label>
+                            <textarea class="form-control" id="documentDescription" rows="3" placeholder="可选的文档描述"></textarea>
+                        </div>
+                        <div class="progress" style="display: none;">
+                            <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="progress-text text-center mt-2"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="uploadDocument()">上传</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑文档模态框 -->
+    <div class="modal fade" id="editDocumentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">编辑文档信息</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editDocumentForm">
+                        <div class="mb-3">
+                            <label for="editDocumentName" class="form-label">文档名称 *</label>
+                            <input type="text" class="form-control" id="editDocumentName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDocumentCategory" class="form-label">分类 *</label>
+                            <select class="form-select" id="editDocumentCategory" required>
+                                <option value="身份证件">身份证件</option>
+                                <option value="医疗健康">医疗健康</option>
+                                <option value="教育证书">教育证书</option>
+                                <option value="财务文件">财务文件</option>
+                                <option value="保险文件">保险文件</option>
+                                <option value="房产文件">房产文件</option>
+                                <option value="家庭照片">家庭照片</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDocumentDescription" class="form-label">描述</label>
+                            <textarea class="form-control" id="editDocumentDescription" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="updateDocument()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 用户资料模态框 -->
+    <div class="modal fade" id="userProfileModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">用户资料</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="profilePhoto" src="" alt="用户头像" class="rounded-circle mb-3" width="100" height="100">
+                    <h5 id="profileName">用户名</h5>
+                    <p class="text-muted" id="profileEmail">邮箱地址</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载遮罩 -->
+    <div id="appLoading" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">加载中...</span>
+            </div>
+            <div class="mt-2">加载中...</div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
+    <!-- 自定义脚本 -->
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/members.js"></script>
+    <script src="js/documents.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

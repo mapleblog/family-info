@@ -1,0 +1,70 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 用户只能访问自己的用户文档
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // 家庭文档访问规则
+    match /families/{familyId} {
+      // 只有家庭成员可以读取家庭信息
+      allow read: if request.auth != null && 
+        request.auth.uid in resource.data.members;
+      
+      // 只有家庭管理员可以修改家庭信息
+      allow write: if request.auth != null && 
+        request.auth.uid in resource.data.admins;
+    }
+    
+    // 家庭成员文档访问规则
+    match /families/{familyId}/members/{memberId} {
+      // 只有同一家庭的成员可以读取成员信息
+      allow read: if request.auth != null && 
+        request.auth.uid in get(/databases/$(database)/documents/families/$(familyId)).data.members;
+      
+      // 只有家庭管理员可以修改成员信息
+      allow write: if request.auth != null && 
+        request.auth.uid in get(/databases/$(database)/documents/families/$(familyId)).data.admins;
+    }
+    
+    // 文档存储访问规则
+    match /families/{familyId}/documents/{documentId} {
+      // 只有同一家庭的成员可以读取文档
+      allow read: if request.auth != null && 
+        request.auth.uid in get(/databases/$(database)/documents/families/$(familyId)).data.members;
+      
+      // 只有家庭成员可以上传文档
+      allow create: if request.auth != null && 
+        request.auth.uid in get(/databases/$(database)/documents/families/$(familyId)).data.members;
+      
+      // 只有文档上传者或家庭管理员可以修改/删除文档
+      allow update, delete: if request.auth != null && 
+        (request.auth.uid == resource.data.uploadedBy || 
+         request.auth.uid in get(/databases/$(database)/documents/families/$(familyId)).data.admins);
+    }
+    
+    // 活动日志访问规则
+    match /families/{familyId}/activities/{activityId} {
+      // 只有同一家庭的成员可以读取活动日志
+      allow read: if request.auth != null && 
+        request.auth.uid in get(/databases/$(database)/documents/families/$(familyId)).data.members;
+      
+      // 只有家庭成员可以创建活动日志
+      allow create: if request.auth != null && 
+        request.auth.uid in get(/databases/$(database)/documents/families/$(familyId)).data.members;
+      
+      // 只有活动创建者或家庭管理员可以修改活动日志
+      allow update, delete: if request.auth != null && 
+        (request.auth.uid == resource.data.userId || 
+         request.auth.uid in get(/databases/$(database)/documents/families/$(familyId)).data.admins);
+    }
+    
+    // 拒绝所有其他访问
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

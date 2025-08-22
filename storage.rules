@@ -1,0 +1,66 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // 文档存储规则
+    match /documents/{familyId}/{fileName} {
+      // 验证用户是否属于该家庭
+      function isValidFamilyMember() {
+        return request.auth != null && 
+               exists(/databases/(default)/documents/families/$(familyId)) &&
+               request.auth.uid in get(/databases/(default)/documents/families/$(familyId)).data.members;
+      }
+      
+      // 验证文件类型
+      function isValidFileType() {
+        return request.resource.contentType.matches('image/.*') ||
+               request.resource.contentType.matches('application/pdf') ||
+               request.resource.contentType.matches('application/msword') ||
+               request.resource.contentType.matches('application/vnd.openxmlformats-officedocument.wordprocessingml.document') ||
+               request.resource.contentType.matches('application/vnd.ms-excel') ||
+               request.resource.contentType.matches('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') ||
+               request.resource.contentType.matches('application/vnd.ms-powerpoint') ||
+               request.resource.contentType.matches('application/vnd.openxmlformats-officedocument.presentationml.presentation') ||
+               request.resource.contentType.matches('text/plain');
+      }
+      
+      // 验证文件大小（最大10MB）
+      function isValidFileSize() {
+        return request.resource.size <= 10 * 1024 * 1024;
+      }
+      
+      // 读取权限：家庭成员可以读取
+      allow read: if isValidFamilyMember();
+      
+      // 写入权限：家庭成员可以上传，且文件类型和大小有效
+      allow write: if isValidFamilyMember() && 
+                      isValidFileType() && 
+                      isValidFileSize();
+      
+      // 删除权限：家庭成员可以删除
+      allow delete: if isValidFamilyMember();
+    }
+    
+    // 用户头像存储规则
+    match /avatars/{userId}/{fileName} {
+      // 只有用户本人可以管理自己的头像
+      allow read, write, delete: if request.auth != null && 
+                                    request.auth.uid == userId &&
+                                    request.resource.contentType.matches('image/.*') &&
+                                    request.resource.size <= 2 * 1024 * 1024; // 最大2MB
+    }
+    
+    // 临时文件存储规则
+    match /temp/{userId}/{fileName} {
+      // 用户可以在临时目录上传文件，24小时后自动删除
+      allow read, write, delete: if request.auth != null && 
+                                    request.auth.uid == userId &&
+                                    request.resource.size <= 50 * 1024 * 1024; // 最大50MB
+    }
+    
+    // 默认拒绝所有其他访问
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
